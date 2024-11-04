@@ -12,7 +12,7 @@ type PullResponse struct {
 	Status string `json:"status"`
 	Digest string `json:"digest"`
 	Total  string `json:"total"`
-	Error  string `josn:"error`
+	Error  string `josn:"error"`
 }
 
 func ShowModel(model string, c *Client) (int, error) {
