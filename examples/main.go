@@ -17,27 +17,43 @@ func main() {
 	client, err := golamify.NewClient(&config)
 	if err != nil {
 		fmt.Print(err)
+		return
 	}
+
 	var wg sync.WaitGroup
 
-	for i := 1; i < 100; i++ {
+	for i := 1; i <= 1; i++ {
 		wg.Add(1)
 
 		go func(i int) {
 			defer wg.Done()
 
 			prompt := fmt.Sprintf("What is the square of %d?", i)
-			resp, err := golamify.Generate(client, "llama3.2:1b", prompt)
-			if err != nil {
-				fmt.Println(err)
-				return
+
+			payload := golamify.GeneratePayload{
+				Model:  "llama3.2:1b",
+				Prompt: prompt,
+				Stream: new(bool),
 			}
 
-			fmt.Println(i,resp.Response)
+			responseChannel, errorChannel := golamify.Generate(client, &payload)
+
+			for {
+				select {
+				case response, ok := <-responseChannel:
+					if !ok {
+						return
+					}
+					fmt.Print(response["response"])
+
+				case err, ok := <-errorChannel:
+					if ok && err != nil {
+						fmt.Println("Error:", err)
+					}
+				}
+			}
 		}(i)
 	}
 
 	wg.Wait()
-
-	return
 }
