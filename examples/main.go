@@ -30,6 +30,7 @@ func main() {
 			resp, err := golamify.Generate(client, "llama3.2:1b", prompt)
 			if err != nil {
 				fmt.Println(err)
+				return
 			}
 
 			fmt.Println(i,resp.Response)

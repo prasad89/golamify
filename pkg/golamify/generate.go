@@ -36,15 +36,10 @@ func Generate(c *Client, model string, prompt string) (*GenerateResponse, error)
 	}
 
 	if statusCode == http.StatusNotFound {
-		pullStatus, err := PullModel(model, c)
+		err := PullModel(model, c)
 		if err != nil {
 			return nil, fmt.Errorf("failed to pull model: %w", err)
 		}
-		if pullStatus != http.StatusOK {
-			return nil, fmt.Errorf("failed to pull model, received status: %d", pullStatus)
-		}
-	} else if statusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code from ShowModel: %d", statusCode)
 	}
 
 	payload := GeneratePayload{
