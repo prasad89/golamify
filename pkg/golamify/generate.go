@@ -14,6 +14,7 @@ type GeneratePayload struct {
 	Prompt    string   `json:"prompt" validate:"required"`
 	Suffix    string   `json:"suffix,omitempty"`
 	Images    []string `json:"images,omitempty"`
+	Format    string   `json:"format,omitempty" validate:"omitempty,oneof=json"`
 	System    string   `json:"system,omitempty"`
 	Template  string   `json:"template,omitempty"`
 	Context   string   `json:"context,omitempty"`
@@ -30,14 +31,14 @@ func Generate(c *Client, payload *GeneratePayload) (<-chan map[string]interface{
 		defer close(responseChannel)
 		defer close(errorChannel)
 
-		statusCode, err := ShowModel(payload.Model, c)
+		statusCode, err := ShowModel(c, payload.Model)
 		if err != nil {
 			errorChannel <- fmt.Errorf("error showing model: %w", err)
 			return
 		}
 
 		if statusCode == http.StatusNotFound {
-			err := PullModel(payload.Model, c)
+			err := PullModel(c, payload.Model)
 			if err != nil {
 				errorChannel <- fmt.Errorf("failed to pull model: %w", err)
 				return

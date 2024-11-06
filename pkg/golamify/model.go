@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func ShowModel(model string, c *Client) (int, error) {
+func ShowModel(c *Client, model string) (int, error) {
 	payload := map[string]string{"name": model}
 
 	body, err := json.Marshal(payload)
@@ -33,7 +33,7 @@ func ShowModel(model string, c *Client) (int, error) {
 	return resp.StatusCode, nil
 }
 
-func PullModel(model string, c *Client) error {
+func PullModel(c *Client, model string) error {
 	payload := map[string]string{"name": model}
 
 	body, err := json.Marshal(payload)
