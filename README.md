@@ -1,4 +1,4 @@
-# GoLamify
+# GoLamify [![Go Reference](https://pkg.go.dev/badge/github.com/prasad89/golamify.svg)](https://pkg.go.dev/github.com/prasad89/golamify)
 
 The **GoLamify** Go package provides an easy way to integrate Go projects with **Ollama**.
 
