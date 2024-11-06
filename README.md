@@ -2,6 +2,15 @@
 
 The **GoLamify** Go package provides an easy way to integrate Go projects with **Ollama**.
 
+## ✨ Features
+
+1. **Generate Responses from Ollama Models** – Easily generate responses using a variety of Ollama models.
+2. **Default Response Streaming** – Real-time response streaming for immediate output.
+3. **Full Parameter Support** – Customize model behavior with full API parameter support.
+4. **No Model Pulling Needed** – Access models without manual pre-pulling.
+5. **Clear Error Handling** – Simple, concise error handling for easy debugging.
+6. **More** – Comming soon.
+
 ## 🚀 Getting Started
 
 ### Installation
@@ -27,6 +36,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/prasad89/golamify/pkg/golamify"
 )
 
@@ -37,13 +47,29 @@ func main() {
 		return
 	}
 
-	resp, err := golamify.Generate(client, "llama3.2", "Why is the sky blue?")
-	if err != nil {
-		fmt.Println("Error generating response:", err)
-		return
+	payload := golamify.GeneratePayload{
+		Model:  "llama3.2:1b",
+		Prompt: "Why is the sky blue?",
 	}
 
-	fmt.Println("Response:", resp.Response)
+	responseChannel, errorChannel := golamify.Generate(client, &payload)
+
+	for {
+		select {
+		case response, ok := <-responseChannel:
+			if !ok {
+				return
+			}
+			fmt.Print(response["response"])
+
+		case err, ok := <-errorChannel:
+			if ok && err != nil {
+				fmt.Println("Error:", err)
+			} else if !ok {
+				return
+			}
+		}
+	}
 }
 ```
 
